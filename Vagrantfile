@@ -90,10 +90,15 @@ Vagrant.configure(2) do |config|
 
       machine['provisions'].each do |p|
         p['run'] = 'once' unless p.has_key?('run')
-        vmconfig.vm.provision p['name'], type: p['kind'], run: p['run'] do |pconfig|
-          if p['kind'] == 'file' and p.has_key?('target') and not p.has_key?('destination') then
+        if p['kind'] == 'file' then
+          if not File.exists?(p['source']) then
+            next # does not exist, exit
+          end
+          if p.has_key?('target') and not p.has_key?('destination') then
             p['destination'] = p.delete('target') + '/' + File.basename(p['source'])
           end
+        end
+        vmconfig.vm.provision p['name'], type: p['kind'], run: p['run'] do |pconfig|
           case p['kind']
             when 'file' then
               ['source', 'destination']
