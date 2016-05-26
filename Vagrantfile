@@ -2,10 +2,16 @@
 # vi: set ft=ruby :
 
 require 'yaml'
+require 'json'
 
-vagrant_cfg = File.expand_path(File.dirname(__FILE__)) + '/vagrant.yml'
-vagrant = YAML.load_file(vagrant_cfg)
-project = vagrant['project']
+root_path = File.expand_path(File.dirname(__FILE__))
+vagrant_yaml_path = root_path + '/vagrant.yml'
+vagrant_json_path = root_path + '/vagrant.json'
+vagrant = if File.exists?(vagrant_yaml_path) then
+            YAML::load(File.read(vagrant_yaml_path))
+          elsif File.exists?(vagrant_json_path) then
+            JSON.parse(File.read(vagrant_json_path))
+          end
 
 Vagrant.configure(2) do |config|
   vagrant['machines'].each do |machine|
@@ -23,7 +29,7 @@ Vagrant.configure(2) do |config|
       # Current supported providers: virtualbox.
 
       machine['providers'].each do |provider, data|
-        data['name'] = project + '-' + machine['name'] unless data.has_key?('name')
+        data['name'] = vagrant['project'] + '-' + machine['name'] unless data.has_key?('name')
         vmconfig.vm.provider provider do |vm|
           case provider
             when 'virtualbox' then
