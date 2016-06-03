@@ -23,8 +23,10 @@ machines:
 
     # key-value pairs of providers that configures the machine for
     # each of the various provider (hypervisor) implementations.
-    # (i.e.: virtualbox, etc.)
+    # (i.e.: virtualbox, vmware_fusion, vmware_workstation, parallels, etc.)
     providers:
+
+      # configurations for hypervisor: virtualbox
       virtualbox:
         name:           # auto set as machine name, unless overridden
         gui:            # boolean whether UI of the host machine will be
@@ -35,7 +37,22 @@ machines:
         cpus:           # number of cpus
         memory:         # amount of memory in megabytes
         customize:      # key-value pairs of arguments for customizations to
-                        # modify the virtualbox VM (i.e.: groups)
+                        # modify the virtualbox VM (i.e.: groups, ostype)
+        vbmanage:       # list of customizations to modify the virtualbox VM;
+                        # each customization is an array of arguments
+
+      # configurations for hypervisor: vmware
+      vmware_fusion:
+      vmware_workstation:
+        name:           # auto set as machine name, unless overridden
+        cpus:           # number of cpus
+        memory:         # amount of memory in megabytes
+        ostype:         # guest operating system type
+
+      # configurations for hypervisor: parallels
+      parallels:
+        cpus:           # number of cpus
+        memory:         # amount of memory in megabytes
 
     # Configures how Vagrant will access your machine over SSH
     ssh:
