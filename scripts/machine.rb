@@ -79,10 +79,6 @@ class Machine
           when :virtualbox then config_virtualbox(vm, config)
           when :vmware_fusion, :vmware_workstation then config_vmware(vm, config)
           when :parallels then config_parallels(vm, config)
-          when :all then
-            ['virtualbox', 'vmware', 'parallels'].each do |hypervisor|
-              self.send("config_#{hypervisor}", vm, config)
-            end
           else raise "Unrecognized provider: #{name.to_s}"
         end
       end
