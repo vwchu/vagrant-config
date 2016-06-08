@@ -22,10 +22,48 @@ class Machine
     end
   end
 
+  # Merges given base with the derived properties, fields and values.
+  # Returns merged object with derived properties, fields and values.
+  def Machine.inherit(base, derived)
+    base.merge(derived) do |key, oldval, newval|
+      if oldval.is_a? Hash then
+        Machine.inherit(oldval, newval)
+      elsif oldval.is_a? Array then
+        oldval + newval
+      else
+        newval
+      end
+    end
+  end
+
+  # Resolves each machines with its inherited properties and fields
+  # from its inherited machines with its derived values.
+  def Machine.resolve_dependency(settings)
+    r = [], d = []
+    settings[:machines].each {|m| (d if m.has_key?(:inherit) else r).push(m)}
+    until d.empty? then
+      old_count = d.count
+      d.delete_if do |dep|
+        machines = r.select {|m| m[:name] == dep[:inherit]}
+        if machines.empty? then
+          return false
+        else
+          r.push(Machine.inherit(machines.first, dep))
+          return true
+        end
+      end
+      if d.count == old_count then # no progress
+        raise "cannot resolve dependencies for all machines"
+      end
+    end
+    return r
+  end
+
   # Configures the machines with the given settings
   def Machine.configure(config, settings)
     settings = Machine.key_to_sym(settings)
     unless settings.nil? then
+      settings[:machines] = Machine.resolve_dependency(settings[:machines])
       settings[:machines].each do |machine|
         config.vm.define machine[:name] do |cnf|
           m = Machine.new(cnf, machine, settings)

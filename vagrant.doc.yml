@@ -20,6 +20,7 @@ machines:
     box_url:            # url of the base box machine
     box_version:        # version number of the base box or 'latest' for
                         # check upate to be set to true
+    inherit:            # name of machine to inherit from
 
     # key-value pairs of providers that configures the machine for
     # each of the various provider (hypervisor) implementations.
