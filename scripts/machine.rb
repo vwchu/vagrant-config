@@ -38,19 +38,17 @@ class Machine
 
   # Resolves each machines with its inherited properties and fields
   # from its inherited machines with its derived values.
-  def Machine.resolve_dependency(settings)
-    r = [], d = []
-    settings[:machines].each {|m| (d if m.has_key?(:inherit) else r).push(m)}
-    until d.empty? then
+  def Machine.resolve_dependency(machines)
+    r = []
+    d = []
+    machines.each {|m| (if m.has_key?(:inherit) then d else r end).push(m)}
+    until d.empty? do
       old_count = d.count
       d.delete_if do |dep|
-        machines = r.select {|m| m[:name] == dep[:inherit]}
-        if machines.empty? then
-          return false
-        else
-          r.push(Machine.inherit(machines.first, dep))
-          return true
-        end
+        mach = r.select {|m| m[:name] == dep[:inherit]}
+        next false if mach.empty?
+        r.push(Machine.inherit(mach.first, dep))
+        next true
       end
       if d.count == old_count then # no progress
         raise "cannot resolve dependencies for all machines"
@@ -110,14 +108,16 @@ class Machine
   # Current supported providers: virtualbox, vmware_fusion,
   # vmware_workstation and parallels.
   def config_providers()
-    @machine[:providers].each do |name, config|
-      config[:name] ||= @name
-      @config.vm.provider name do |vm|
-        case name
-          when :virtualbox then config_virtualbox(vm, config)
-          when :vmware_fusion, :vmware_workstation then config_vmware(vm, config)
-          when :parallels then config_parallels(vm, config)
-          else raise "Unrecognized provider: #{name.to_s}"
+    if @machine.has_key?(:providers) then
+      @machine[:providers].each do |name, config|
+        config[:name] ||= @name
+        @config.vm.provider name do |vm|
+          case name
+            when :virtualbox then config_virtualbox(vm, config)
+            when :vmware_fusion, :vmware_workstation then config_vmware(vm, config)
+            when :parallels then config_parallels(vm, config)
+            else raise "Unrecognized provider: #{name.to_s}"
+          end
         end
       end
     end
@@ -129,7 +129,7 @@ class Machine
       case key
         when :name, :gui, :linked_clone, :cpus, :memory then vb.send("#{key.to_s}=", value)
         when :customize then value.each {|k, v| vb.customize(['modifyvm', :id, "--#{k.to_s}", v]) }
-        when :vbmanage  then value.each {|v|    vb.customize(v.map {|arg| :id if arg == ':id' else arg }) }
+        when :vbmanage  then value.each {|v| vb.customize(v.map {|arg| if arg == ':id' then :id else arg end}) }
         else raise "Bad Virtualbox '#{key.to_s}' configuration."
       end
     end
@@ -163,12 +163,14 @@ class Machine
   # Configures the various metworks the machine
   # should be able to connect to.
   def config_network()
-    @machine[:networks].each do |net|
-      @config.vm.network net[:kind], (case net.delete(:kind)
-        when 'forwarded_port'  then config_net_fwport(net)
-        when 'private_network' then config_net_private(net)
-        when 'public_network'  then config_net_public(net)
-      end)
+    if @machine.has_key?(:networks) then
+      @machine[:networks].each do |net|
+        @config.vm.network net[:kind], (case net.delete(:kind)
+          when 'forwarded_port'  then config_net_fwport(net)
+          when 'private_network' then config_net_private(net)
+          when 'public_network'  then config_net_public(net)
+        end)
+      end
     end
   end
 
@@ -198,10 +200,12 @@ class Machine
   # but use the resources in the guest machine to compile or run
   # your project.
   def config_synced_folders()
-    @machine[:synced_folders].each do |sf|
-      @config.vm.synced_folder sf[:host], sf[:guest] do |config|
-        [:create, :group, :owner, :mount_options].each do |key|
-          config.send("#{key.to_s}=", sf[key]) if sf.has_key?(key)
+    if @machine.has_key?(:synced_folders) then
+      @machine[:synced_folders].each do |sf|
+        @config.vm.synced_folder sf[:host], sf[:guest] do |config|
+          [:create, :group, :owner, :mount_options].each do |key|
+            config.send("#{key.to_s}=", sf[key]) if sf.has_key?(key)
+          end
         end
       end
     end
@@ -211,22 +215,24 @@ class Machine
   # rules and routines that specialize the machine.
   # Current provisioner supported: file, shell
   def config_provision()
-    @machine[:provisions].each do |config|
-      kind = config.delete(:kind)
-      config[:run] = 'once' unless config.has_key?(:run)
-      case kind
-        when 'shell' then # do nothing
-        when 'file'  then
-          next unless File.exists?(config[:source])
-          if config.has_key?(:target) and not config.has_key?(:destination) then
-            config[:destination] = config.delete(:target) + '/' + File.basename(config[:source])
-          end
-        else raise "Unrecognized provision '#{kind}'."
-      end
-      @config.vm.provision config[:name], type: kind, run: config[:run] do |p|
+    if @machine.has_key?(:provisions) then
+      @machine[:provisions].each do |config|
+        kind = config.delete(:kind)
+        config[:run] = 'once' unless config.has_key?(:run)
         case kind
-          when 'file'  then config_provision_file(p, config)
-          when 'shell' then config_provision_shell(p, config)
+          when 'shell' then # do nothing
+          when 'file'  then
+            next unless File.exists?(config[:source])
+            if config.has_key?(:target) and not config.has_key?(:destination) then
+              config[:destination] = config.delete(:target) + '/' + File.basename(config[:source])
+            end
+          else raise "Unrecognized provision '#{kind}'."
+        end
+        @config.vm.provision config[:name], type: kind, run: config[:run] do |p|
+          case kind
+            when 'file'  then config_provision_file(p, config)
+            when 'shell' then config_provision_shell(p, config)
+          end
         end
       end
     end
