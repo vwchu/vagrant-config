@@ -61,8 +61,10 @@ class Machine
   def Machine.configure(config, settings)
     settings = Machine.key_to_sym(settings)
     unless settings.nil? then
+      settings[:machines].each {|m| m[:abstract] = false unless m.has_key?(:abstract)}
       settings[:machines] = Machine.resolve_dependency(settings[:machines])
       settings[:machines].each do |machine|
+        next if machine[:abstract] # abstract machine, skip
         config.vm.define machine[:name] do |cnf|
           m = Machine.new(cnf, machine, settings)
           ['box', 'ssh', 'providers', 'network', 'synced_folders', 'provision'].each do |key|

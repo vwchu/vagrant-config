@@ -21,6 +21,10 @@ machines:
     box_version:        # version number of the base box or 'latest' for
                         # check upate to be set to true
     inherit:            # name of machine to inherit from
+    abstract:           # whether or not machine is abstract or concrete;
+                        # if abstract, cannot be created; not inherited
+                        # attribute, must be explicitly set to true for each
+                        # machine or defaults to false.
 
     # key-value pairs of providers that configures the machine for
     # each of the various provider (hypervisor) implementations.
