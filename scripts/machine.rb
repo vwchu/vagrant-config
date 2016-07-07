@@ -205,7 +205,7 @@ class Machine
     if @machine.has_key?(:synced_folders) then
       @machine[:synced_folders].each do |sf|
         @config.vm.synced_folder sf[:host], sf[:guest] do |config|
-          [:create, :group, :owner, :mount_options].each do |key|
+          [:id, :create, :group, :owner, :mount_options].each do |key|
             config.send("#{key.to_s}=", sf[key]) if sf.has_key?(key)
           end
         end

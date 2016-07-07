@@ -106,6 +106,9 @@ machines:
         guest:          # the path on the guest machine relative to the project
 
         # optional properties
+        id:             # The name for the mount point of this synced folder
+                        # in the guest machine. This shows up when you run
+                        # mount in the guest machine.
         create:         # boolean for whether to create the directory on the
                         # guest if it does not exist previously
         group:          # group assignment of the directory on the guest
