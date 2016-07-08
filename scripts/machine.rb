@@ -205,8 +205,17 @@ class Machine
     if @machine.has_key?(:synced_folders) then
       @machine[:synced_folders].each do |sf|
         @config.vm.synced_folder sf[:host], sf[:guest] do |config|
-          [:id, :create, :group, :owner, :mount_options].each do |key|
+          [:id, :type, :create, :group, :owner, :mount_options].each do |key|
             config.send("#{key.to_s}=", sf[key]) if sf.has_key?(key)
+          end
+          if sf.has_key?(:type) then
+            case sf[:type]
+              when 'rsync' then
+                [:args, :auto, :exclude, :chown, :rsync_path, :verbose].each do |key|
+                  config.send("rsync__#{key.to_s}=", sf[key]) if sf.has_key?(key)
+                end
+              else raise "Unrecognized synced folder type '#{sf[:type]}'."
+            end
           end
         end
       end

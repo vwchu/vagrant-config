@@ -109,12 +109,40 @@ machines:
         id:             # The name for the mount point of this synced folder
                         # in the guest machine. This shows up when you run
                         # mount in the guest machine.
+        type:           # The type of synced folder. If this is not specified,
+                        # Vagrant will automatically choose the best synced
+                        # folder option for your environment. Otherwise, you can
+                        # specify a specific type such as "rsync".
         create:         # boolean for whether to create the directory on the
                         # guest if it does not exist previously
         group:          # group assignment of the directory on the guest
         owner:          # owner assignment of the directory on the guest
         mount_options:  # mounting options for the mount command when
                         # attaching the synced folder to the guest machine
+
+        # if type is: rsync
+        args:           # A list of arguments to supply to rsync.
+                        # By default this is ["--verbose", "--archive",
+                        # "--delete", "-z", "--copy-links"].
+        auto:           # boolean whether or not rsync-auto will watch and
+                        # automatically sync this folder.
+                        # By default, this is true.
+        exclude:        # string or array of strings for a list of files or
+                        # directories to exclude from the sync. The values can
+                        # be any acceptable rsync exclude pattern. By default,
+                        # the ".vagrant/" directory is excluded. We recommend
+                        # excluding revision control directories such as
+                        # ".git/" as well.
+        chown:          # boolean whether or not the owner and group options
+                        # for the synced folder are not ignored and Vagrant will
+                        # execute a recursive chown. This defaults to true.
+        rsync_path:     # The path on the remote host where rsync is and
+                        # how it is executed. This is platform specific but
+                        # defaults to "sudo rsync" for many guests.
+        verbose:        # boolean whether or not the output from the rsync
+                        # process will be echoed to the console. The output of
+                        # rsync is subject to rsync__args of course.
+                        # By default, this is false.
 
     # list of provisioning rules
     provisions:
