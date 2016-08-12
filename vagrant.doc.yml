@@ -30,6 +30,10 @@ machines:
                         # if abstract, cannot be created; not inherited
                         # attribute, must be explicitly set to true for each
                         # machine or defaults to false.
+    autostart:          # By default in a multi-machine environment, vagrant up
+                        # will start all of the defined machines. The autostart
+                        # setting allows you to tell Vagrant to not start
+                        # specific machines.
 
     # key-value pairs of providers that configures the machine for
     # each of the various provider (hypervisor) implementations.
