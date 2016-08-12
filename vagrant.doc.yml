@@ -10,6 +10,11 @@
 # name of the project (root name of machines)
 project:
 
+# specifies a primary machine. The primary machine will be the
+# default machine used when a specific machine in a multi-
+# machine environment is not specified. (optional)
+primary:
+
 # list of (multiple) machines and the configurations
 # for each of the machines.
 machines:

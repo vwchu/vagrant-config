@@ -65,7 +65,7 @@ class Machine
       settings[:machines] = Machine.resolve_dependency(settings[:machines])
       settings[:machines].each do |machine|
         next if machine[:abstract] # abstract machine, skip
-        config.vm.define machine[:name] do |cnf|
+        config.vm.define machine[:name], primary: machine[:name] == settings[:primary] do |cnf|
           m = Machine.new(cnf, machine, settings)
           ['box', 'ssh', 'providers', 'network', 'synced_folders', 'provision'].each do |key|
             m.send("config_#{key}")
