@@ -57,8 +57,10 @@ class Machine
     return r
   end
 
-  # Configures the machines with the given settings
-  def Machine.configure(config, settings)
+  # Creates the machine objects with the given settings
+  # Returns an array of machine objects.
+  def Machine.create_machines(settings)
+    machines = []
     settings = Machine.key_to_sym(settings)
     unless settings.nil? then
       settings[:machines].each {|m| m[:abstract] = false unless m.has_key?(:abstract)}
@@ -67,26 +69,37 @@ class Machine
         next if machine[:abstract] # abstract machine, skip
         machine[:primary] = machine[:name] == settings[:primary]
         machine[:autostart] = (not settings.has_key?(:autostart) or settings[:autostart]) unless machine.has_key?(:autostart)
-        config.vm.define machine[:name], primary: machine[:primary], autostart: machine[:autostart] do |cnf|
-          m = Machine.new(cnf, machine, settings)
-          ['box', 'ssh', 'providers', 'network', 'synced_folders', 'provision'].each do |key|
-            m.send("config_#{key}")
-          end
-        end
+        machines.push(Machine.new(machine, settings))
       end
     end
+    return machines
+  end
+
+  # Configures the machines with the given settings
+  # Vagrant configuration object.
+  def Machine.configure(config, settings)
+    Machine.create_machines(settings).each {|m| m.config_vm(config)}
   end
 
   ## Instance methods
 
-  # Constructs and initializes a new Machine
-  # instance with the given VM configuration,
-  # machine data and provisioning settings
-  def initialize(config, machine, settings)
+  # Constructs a new Machine instance with the 
+  # given machine data and provisioning settings.
+  def initialize(machine, settings)
     @name     = "#{settings[:project]}-#{machine[:name]}"
-    @config   = config
     @machine  = machine
     @settings = settings
+  end
+
+  # Configures a Vagrant machine with the given 
+  # Vagrant configuration object.
+  def config_vm(config)
+    config.vm.define @machine[:name], primary: @machine[:primary], autostart: @machine[:autostart] do |cnf| 
+      @config = cnf # For access within other methods.
+      ['box', 'ssh', 'providers', 'network', 'synced_folders', 'provision'].each do |key|
+        self.send("config_#{key}")
+      end
+    end
   end
 
   # Configures supported fields for base box
