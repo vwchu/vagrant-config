@@ -66,7 +66,7 @@ class Machine
       settings[:machines].each do |machine|
         next if machine[:abstract] # abstract machine, skip
         machine[:primary] = machine[:name] == settings[:primary]
-        machine[:autostart] = true unless machine.has_key?(:autostart)
+        machine[:autostart] = (not settings.has_key?(:autostart) or settings[:autostart]) unless machine.has_key?(:autostart)
         config.vm.define machine[:name], primary: machine[:primary], autostart: machine[:autostart] do |cnf|
           m = Machine.new(cnf, machine, settings)
           ['box', 'ssh', 'providers', 'network', 'synced_folders', 'provision'].each do |key|

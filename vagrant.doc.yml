@@ -15,6 +15,12 @@ project:
 # machine environment is not specified. (optional)
 primary:
 
+# By default in a multi-machine environment, vagrant up will
+# start all of the defined machines. The autostart setting
+# allows you to tell Vagrant to not start any machines by
+# default. Specific machines can override this setting.
+autostart:
+
 # list of (multiple) machines and the configurations
 # for each of the machines.
 machines:
