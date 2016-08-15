@@ -90,14 +90,11 @@ class Provision
       upload_path = shell_upload_path(provision)
       if provision.has_key?(:inline) then
         echo provision[:kind], "#{provision[:name]}, inline script"
-        File.open(upload_path, 'w') do |file| 
-          file.write("#!/bin/bash\n")
-          file.write(provision[:inline])
-        end
+        File.open(upload_path, 'w') {|f| f.write("#!/bin/bash\n" + provision[:inline])}
       else
         echo provision[:kind], "#{provision[:name]}, path #{provision[:path]}"
         system('cp', '-v', File.expand_path(provision[:path]), upload_path)        
-      end     
+      end
       unless File.exists?(upload_path) then
         error provision[:kind], "script not accessible."
       else
