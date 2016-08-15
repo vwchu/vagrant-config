@@ -71,6 +71,10 @@ class Machine
 
   ## Instance methods
 
+  attr_accessor :name
+  attr_accessor :machine
+  attr_accessor :settings
+
   # Constructs a new Machine instance with the 
   # given machine data and provisioning settings.
   def initialize(machine, settings)
