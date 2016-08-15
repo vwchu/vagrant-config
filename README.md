@@ -30,3 +30,21 @@ vagrant.sh up [vm]
 
 * [Oracle VirtualBox](https://www.virtualbox.org)
 * [Vagrant](https://www.vagrantup.com/)
+
+## Experimental
+
+### Provision Locally
+
+To provision the environment specified by the `vagrant.yml` or 
+`vagrant.json` locally on a host machine, run the command:
+
+```bash
+bash run_local.sh [vm]
+```
+
+**Note**: Being an experimental feature, not all provisioning mechanisms are
+currently implemented, only the file and shell provisioners. Only works on
+Linux based systems. The virtual machine's home directory is mapped to the
+current user's home directory. Installs RVM and Ruby as a prerequisite.
+
+**Use at your own risk.**
