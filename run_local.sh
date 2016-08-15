@@ -24,10 +24,13 @@ get_gpg_key() {
     || (curl -sSL https://rvm.io/mpapis.asc | gpg2 --import - )
 }
 
+install_ruby() {
+  curl -sSL https://get.rvm.io | bash -s stable --ruby
+}
+
 if ! which rvm >& /dev/null; then
   # Install the latest version of Ruby via RVM.
-  get_gpg_key 409B6B1796C275462A1703113804BB82D39DC0E3 \
-    && (curl -sSL https://get.rvm.io | bash -s stable --ruby)
+  get_gpg_key '409B6B1796C275462A1703113804BB82D39DC0E3' && install_ruby
 fi
 
 # Initialize RVM and ruby
