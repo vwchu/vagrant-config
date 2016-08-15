@@ -41,14 +41,41 @@ class Provision
     return machine_list
   end
 
+  # Configures symbolic links to mimic the shared synced folders
+  # between the host and guest machines. Returns a list of the
+  # symbolic links that were created, for deletion later on cleanup.
+  def Provision.configure_synced_folders(synced_folders)
+    symlinks = []
+    synced_folders.each do |sf|
+      unless sf.has_key?(:host)  then error 'synced folder' "missing 'host' parameter" end
+      unless sf.has_key?(:guest) then error 'synced folder' "missing 'guest' parameter" end
+
+      target = File.expand_path(sf[:host])
+      unless File.exists?(target)    then error 'synced folder' "host directory '#{target}' does not exist" end
+      unless File.directory?(target) then error 'synced folder' "host '#{target}' is not a directory" end
+
+      symlink = File.expand_path(sf[:guest].gsub(/\/home\/vagrant/, '~'))
+      if File.exists?(symlink) and File.realpath(symlink) != File.realpath(target) then 
+        error 'synced folder' "guest '#{guest}' conflicts with existing file, aborting"
+      elsif system('ln', '-sv', File.expand_path(target), File.expand_path(symlink)) then
+        symlinks.push(symlink)
+      end
+    end
+    return symlinks
+  end
+
   # Runs provisioning for the given machines that
   # matches the given arguments.
   def Provision.run_provisions(machines, arguments)
     Provision.machine_list(machines, arguments).each do |machine|
+      symlinks = Provision.configure_synced_folders(machine.machine[:synced_folders])
       machine.machine[:provisions].each do |p|
         unless Provision.new.run_provision(p) then
           abort "Provision exited with non-zero status.".red
         end
+      end
+      symlinks.each do |symlink|
+        system('rm', '-v', File.expand_path(symlink))
       end
     end
   end
