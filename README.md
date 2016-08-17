@@ -24,16 +24,6 @@ the following command:
 vagrant.sh up [vm]
 ```
 
-To create a packaged virtual machine, once the YAML file is configured,
-execute in the terminal the command:
-
-```bash
-vagrant_box.sh [vm]
-```
-
-Outputs the created box into a `boxes` directory
-in the current working directory.
-
 **Note:** Not all Vagrant features are implemented, yet.
 
 ## Requirements
