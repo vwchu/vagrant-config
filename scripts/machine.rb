@@ -114,8 +114,10 @@ class Machine
   # Configures the SSH properties for how
   # Vagrant will access your machine over SSH.
   def config_ssh()
-    [:username, :password, :shell, :private_key_path, :insert_key].each do |k|
-      @config.ssh.send("#{k.to_s}=", @machine[:ssh][k]) if @machine[:ssh].has_key?(k)
+    if @machine.has_key?(:ssh) then
+      [:username, :password, :shell, :private_key_path, :insert_key].each do |k|
+        @config.ssh.send("#{k.to_s}=", @machine[:ssh][k]) if @machine[:ssh].has_key?(k)
+      end
     end
   end
 
