@@ -9,9 +9,9 @@
 #--------------------------------------------------
 
 if [[ -n "$1" ]]; then
-  vagrant up "$1"
+  $(dirname $0)/vagrant.sh up "$1"
 else
-  vagrant up
+  $(dirname $0)/vagrant.sh up
 fi
 
 vm="${1:-$(echo .vagrant/machines/*/virtualbox/id | \
@@ -21,7 +21,7 @@ vm="${1:-$(echo .vagrant/machines/*/virtualbox/id | \
 if [[ -f .vagrant/machines/$vm/virtualbox/id ]]; then
   mkdir -p "boxes"
   rm -f "boxes/$vm.box"
-  vagrant package \
+  $(dirname $0)/vagrant.sh package \
     --base "$(cat .vagrant/machines/$vm/virtualbox/id)" \
     --output "boxes/$vm.box"
 fi
