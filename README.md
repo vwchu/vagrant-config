@@ -39,7 +39,7 @@ To provision the environment specified by the `vagrant.yml` or
 `vagrant.json` locally on a host machine, run the command:
 
 ```bash
-bash run_local.sh [vm]
+run_local.sh [vm]
 ```
 
 **Note**: Being an experimental feature, not all provisioning mechanisms are

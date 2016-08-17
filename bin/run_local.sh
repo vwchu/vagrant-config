@@ -38,4 +38,4 @@ source ~/.rvm/scripts/rvm
 rvm use ruby
 
 # Run local provisioning
-ruby $(dirname $0)/scripts/run_local.rb $@
+ruby $(dirname $0)/../scripts/run_local.rb $@
