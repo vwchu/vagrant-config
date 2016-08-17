@@ -5,8 +5,8 @@ require 'yaml'
 require 'json'
 
 root_path = File.expand_path(File.dirname(__FILE__))
-vagrant_yaml_path = "#{root_path}/vagrant.yml"
-vagrant_json_path = "#{root_path}/vagrant.json"
+vagrant_yaml_path = Dir.pwd + "/vagrant.yml"
+vagrant_json_path = Dir.pwd + "/vagrant.json"
 
 require "#{root_path}/scripts/machine.rb"
 
