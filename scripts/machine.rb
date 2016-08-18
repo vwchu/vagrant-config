@@ -29,7 +29,7 @@ class Machine
   def Machine.resolve_dependency(machines)
     r = []
     d = []
-    machines.each {|m| (if m.has_key?(:inherit) then d else r end).push(m)}
+    machines.each {|n, m| (if m.has_key?(:inherit) then d else r end).push(m)}
     until d.empty? do
       old_count = d.count
       d.delete_if do |dep|
@@ -51,9 +51,9 @@ class Machine
     machines = []
     settings = Machine.key_to_sym(settings)
     unless settings.nil? then
-      settings[:machines].each {|m| m[:abstract] = false unless m.has_key?(:abstract)}
-      settings[:machines] = Machine.resolve_dependency(settings[:machines])
-      settings[:machines].each do |machine|
+      settings[:machines].each {|n, m| m[:name] = n.to_s}
+      settings[:machines].each {|n, m| m[:abstract] = false unless m.has_key?(:abstract)}
+      Machine.resolve_dependency(settings[:machines]).each do |machine|
         next if machine[:abstract] # abstract machine, skip
         machine[:primary] = machine[:name] == settings[:primary]
         machine[:autostart] = (not settings.has_key?(:autostart) or settings[:autostart]) unless machine.has_key?(:autostart)

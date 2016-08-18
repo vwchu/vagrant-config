@@ -2,7 +2,7 @@
 
 project: sample
 machines:
-  - name: default
+  default:
     box: ubuntu/trusty64
 
     providers:

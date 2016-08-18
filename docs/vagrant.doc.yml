@@ -24,7 +24,7 @@ autostart:
 # list of (multiple) machines and the configurations
 # for each of the machines.
 machines:
-  - name:               # machine name
+  <machine_name>:       # machine name
     box:                # shorthand name of the base box machine
 
     # optional properties
