@@ -7,9 +7,38 @@
 # with a `vagrant.yml` or `vagrant.json` locate in the
 # current working directory. 
 #
-# Usage:
-#   ./vagrant.sh [<vagrant_args>...]
+#<doc>
+# Usage: ./vagrant.sh --configs=CONFIG [<vagrant_args>...]
 #
+#   --configs=CONFIG
+#       Comma-separated list of paths to cascading config
+#       files in order of cascade; if path does not 
+#       include file extension, will try .yml and .json
+#       in that order. Default: ./vagrant
+#
+#<enddoc>
 #-----------------------------------------------------------------
 
-VAGRANT_VAGRANTFILE=$(dirname $0)/../Vagrantfile vagrant "$@"
+print_help() {
+  cat "$0" | sed -n '/#<doc>/,/#<enddoc>/p' | while read -r line; do
+    if [[ "$line" != '#'* ]]; then
+      break
+    elif [[ "$line" == '#!/bin/bash' || "$line" == '#<doc>' || "$line" == '#<enddoc>' ]]; then
+      continue
+    else
+      echo "${line:2}"
+    fi
+  done
+}
+
+ARGV=()
+for argv in "$@"; do
+  case "$argv" in
+    (--configs=*) export VAGRANT_CONFIGS="${argv#--configs=}";;
+    (--help) print_help && ARGV+=("$argv");;
+    (*) ARGV+=("$argv");;
+  esac
+done
+
+export VAGRANT_VAGRANTFILE="$(dirname $0)/../Vagrantfile"
+vagrant "${ARGV[@]}"
