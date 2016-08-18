@@ -5,6 +5,8 @@
 # associated machine configurations and the
 # virtual machine provisioner settings.
 #--------------------------------------------------
+require_relative "shared.rb"
+
 class Machine
 
   ## Class methods
@@ -22,20 +24,6 @@ class Machine
     end
   end
 
-  # Merges given base with the derived properties, fields and values.
-  # Returns merged object with derived properties, fields and values.
-  def Machine.inherit(base, derived)
-    base.merge(derived) do |key, oldval, newval|
-      if oldval.is_a? Hash then
-        Machine.inherit(oldval, newval)
-      elsif oldval.is_a? Array then
-        oldval + newval
-      else
-        newval
-      end
-    end
-  end
-
   # Resolves each machines with its inherited properties and fields
   # from its inherited machines with its derived values.
   def Machine.resolve_dependency(machines)
@@ -47,7 +35,7 @@ class Machine
       d.delete_if do |dep|
         mach = r.select {|m| m[:name] == dep[:inherit]}
         next false if mach.empty?
-        r.push(Machine.inherit(mach.first, dep))
+        r.push(mach.first.deep_merge(dep))
         next true
       end
       if d.count == old_count then # no progress
