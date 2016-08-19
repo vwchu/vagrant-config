@@ -27,6 +27,7 @@
 
 require 'yaml'
 require 'json'
+require_relative "./shared.rb"
 require_relative "./machine.rb"
 require_relative "./provision.rb"
 
