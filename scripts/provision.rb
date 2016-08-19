@@ -12,7 +12,7 @@
 # Use at your own risk.
 #--------------------------------------------------
 
-require_relative "./colorize.rb"
+require_relative "shared.rb"
 
 class Provision
 

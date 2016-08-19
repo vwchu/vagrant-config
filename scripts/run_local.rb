@@ -27,9 +27,9 @@
 
 require 'yaml'
 require 'json'
-require_relative "./shared.rb"
-require_relative "./machine.rb"
-require_relative "./provision.rb"
+require_relative "shared.rb"
+require_relative "machine.rb"
+require_relative "provision.rb"
 
 Provision.run_provisions(Machine.create_machines(Config.resolve_dependencies(
   if ENV.has_key?('VAGRANT_CONFIGS') then
