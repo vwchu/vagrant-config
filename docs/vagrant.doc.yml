@@ -10,6 +10,11 @@
 # name of the project (root name of machines)
 project:
 
+# specifies a list of configuration files to
+# include and are required for this configuration
+# file to be provisioned correctly. (default: [])
+includes:
+
 # specifies a primary machine. The primary machine will be the
 # default machine used when a specific machine in a multi-
 # machine environment is not specified. (optional)
