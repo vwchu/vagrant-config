@@ -40,5 +40,5 @@ for argv in "$@"; do
   esac
 done
 
-export VAGRANT_VAGRANTFILE="$(dirname $0)/../Vagrantfile"
+export VAGRANT_VAGRANTFILE="$(dirname $(which $0))/../Vagrantfile"
 vagrant "${ARGV[@]}"
