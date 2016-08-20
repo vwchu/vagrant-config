@@ -31,6 +31,8 @@ require_relative "shared.rb"
 require_relative "machine.rb"
 require_relative "provision.rb"
 
+ENV['VAGRANT_VAGRANTFILE_DIRPATH'] = File.expand_path(File.dirname(__FILE__))
+
 Provision.run_provisions(Machine.create_machines(Config.resolve_dependencies(
   if ENV.has_key?('VAGRANT_CONFIGS') then
     ENV['VAGRANT_CONFIGS'].split(',').map {|s| s.strip}
