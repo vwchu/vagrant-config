@@ -30,7 +30,7 @@ bash vagrant.sh up [vm]
 
 **Note:** Not all Vagrant features are implemented, yet.
 
-For more detailed examples and a tutorial, see [here](docs/tutorial.md)
+For more detailed examples and a tutorial, see [here](docs/tutorial.md).
 
 ## Requirements
 
