@@ -2,7 +2,11 @@
 
 A small tool for specifying and configuring a multiple machine
 environment using the virtual machine management and
-automation tool, Vagrant, from a YAML or JSON file.
+automation tool, Vagrant, from a YAML or JSON file or a ERB 
+templating file that generates a YAML or JSON output. Multiple
+configuration files can also be cascaded and merged together
+dynamically to composite machines using the `includes` property or
+the `--configs` option.
 
 ## Getting Started
 
@@ -21,10 +25,12 @@ is configured, place in a location of your choice and execute in the terminal
 the following command:
 
 ```bash
-vagrant.sh up [vm]
+sh vagrant.sh up [vm]
 ```
 
 **Note:** Not all Vagrant features are implemented, yet.
+
+For more detailed examples and a tutorial, see [here](docs/tutorial.md)
 
 ## Requirements
 
