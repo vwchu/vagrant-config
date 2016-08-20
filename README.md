@@ -25,7 +25,7 @@ is configured, place in a location of your choice and execute in the terminal
 the following command:
 
 ```bash
-sh vagrant.sh up [vm]
+bash vagrant.sh up [vm]
 ```
 
 **Note:** Not all Vagrant features are implemented, yet.
