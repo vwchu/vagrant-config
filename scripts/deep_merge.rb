@@ -9,7 +9,7 @@
 
 class Hash
   def deep_merge(other)
-    self.merge(other) do |key, oldval, newval|
+    Marshal.load(Marshal.dump(self.merge(other) do |key, oldval, newval|
       if oldval.is_a? Hash then
         oldval.deep_merge(newval)
       elsif oldval.is_a? Array then
@@ -17,6 +17,6 @@ class Hash
       else
         newval
       end
-    end
+    end))
   end
 end # Hash
