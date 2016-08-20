@@ -7,7 +7,7 @@
 # files into one configuration.
 #--------------------------------------------------
 
-require_relative "./colorize.rb"
+require_relative "shared.rb"
 
 class Config
 
@@ -16,6 +16,10 @@ class Config
     if path.end_with?('.yml') and File.exists?(path) then
       File.expand_path(path)
     elsif path.end_with?('.json') and File.exists?(path) then
+      File.expand_path(path)
+    elsif path.end_with?('.yml.erb') and File.exists?(path) then
+      File.expand_path(path)
+    elsif path.end_with?('.json.erb') and File.exists?(path) then
       File.expand_path(path)
     elsif File.exists?("#{path}.yml") then
       File.expand_path("#{path}.yml")
@@ -32,6 +36,10 @@ class Config
       YAML::load(File.read(path))
     elsif path.end_with?('.json') and File.exists?(path) then
       JSON.parse(File.read(path))
+    elsif path.end_with?('.yml.erb') and File.exists?(path) then
+      YAML::load(File.read(path).template({ENV: ENV}))
+    elsif path.end_with?('.json.erb') and File.exists?(path) then
+      JSON.parse(File.read(path).template({ENV: ENV}))
     else
       raise "Cannot resolve #{path}.yml or #{path}.json."
     end
