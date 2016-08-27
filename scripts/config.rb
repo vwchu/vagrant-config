@@ -50,7 +50,7 @@ class Config
   # Returns the merge order of the files.
   def Config.batch_load(includes, configs, cwd)
     loads = []
-    includes.map {|inc| Config.resolve_path("#{cwd}/#{inc}")}.each do |inc| 
+    includes.map {|inc| Config.resolve_path("#{cwd}/#{inc}")}.each do |inc|
       next if configs.has_key?(inc)
       configs[inc] = config = Config.load(inc)
       if config.has_key?('includes') then
@@ -65,12 +65,9 @@ class Config
   # returns the merged configuration hash.
   def Config.resolve_dependencies(includes)
     resolved = {}
-    puts "Merging VM configuration:".cyan
     Config.batch_load(includes, configs = {}, Dir.pwd).each do |inc|
-      puts " >> Resolving #{inc}...".cyan
       resolved = resolved.deep_merge(configs[inc])
     end
-    puts "Configurations ready.".cyan
     return resolved
   end
 
