@@ -67,13 +67,11 @@ the `--configs` option.
 ## <a name="config"></a> Configuring the Environment
 
 To create or configure a single or multiple virtual machine
-environment, create a `vagrant.yml` based on the documentation and example
-provided in [`vagrant.doc.yml`](docs/vagrant.doc.yml) file or use the sample
-provided in [`vagrant.sample.yml`](docs/vagrant.sample.yml).
+environment, create a `vagrant.yml` based on the documentation provided
+in [`vagrant.doc.yml`](docs/vagrant.doc.yml) file. Sample configurations
+can be found in the `samples` directory.
 
 **Note:** Not all Vagrant features are implemented, yet.
-
-For more detailed examples and a tutorial, see [here](docs/tutorial.md).
 
 ## Requirements
 
