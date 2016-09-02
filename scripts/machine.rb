@@ -74,7 +74,7 @@ class Machine
   # Constructs a new Machine instance with the 
   # given machine data and provisioning settings.
   def initialize(machine, settings)
-    @name     = "#{settings[:project]}-#{machine[:name]}"
+    @name     = "#{ENV['VAGRANT_PROJECT_NAME'] ||= settings[:project]}--#{machine[:name]}"
     @machine  = machine
     @settings = settings
   end
