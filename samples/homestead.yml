@@ -1,0 +1,15 @@
+# homestead.yml
+
+includes: [base]
+machines:
+  homestead:
+    box: laravel/homestead
+    inherit: base
+    autostart: false
+    provisions:
+      - kind: shell
+        name: composer
+        privileged: false
+        inline: |
+          composer global require "laravel/installer"
+          echo 'export PATH="$PATH:$HOME/.config/composer/vendor/bin"' >> ~/.bashrc

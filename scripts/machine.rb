@@ -75,18 +75,18 @@ class Machine
   attr_accessor :machine
   attr_accessor :settings
 
-  # Constructs a new Machine instance with the 
+  # Constructs a new Machine instance with the
   # given machine data and provisioning settings.
   def initialize(machine, settings)
-    @name     = "#{settings[:project]}-#{machine[:name]}"
+    @name     = "#{ENV['VAGRANT_PROJECT_NAME'] ||= settings[:project]}--#{machine[:name]}"
     @machine  = machine
     @settings = settings
   end
 
-  # Configures a Vagrant machine with the given 
+  # Configures a Vagrant machine with the given
   # Vagrant configuration object.
   def config_vm(config)
-    config.vm.define @machine[:name], primary: @machine[:primary], autostart: @machine[:autostart] do |cnf| 
+    config.vm.define @machine[:name], primary: @machine[:primary], autostart: @machine[:autostart] do |cnf|
       @config = cnf # For access within other methods.
       ['box', 'ssh', 'providers', 'network', 'synced_folders', 'provision'].each do |key|
         self.send("config_#{key}")
