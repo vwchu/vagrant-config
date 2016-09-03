@@ -30,39 +30,21 @@ the `--configs` option.
 
 ### Embedded Installation
 
-1. Install [VirtualBox](https://www.virtualbox.org)
-2. Install [Vagrant](https://www.vagrantup.com/)
-3. Add this repository to your project as a submodule:
+1. Do a global installation (up to Step 4)
+2. In the project that you want to embedded this tool, run commands:
 
    ```bash
-   git submodule add https://github.com/vwchu/vagrant-configurator.git .vagrant/configurator
+   bash vagrant_embed.sh [options]
    ```
 
-   Or as a subtree:
-
-   ```bash
-   git subtree add --prefix .vagrant/configurator https://github.com/vwchu/vagrant-configurator.git master --squash
-   ```
-
-4. Create the directory: `.vagrant/configurations` and add your configurations
-   files here, see [Configuring the Environment](#config).
+3. Create your configuration files in `.vagrant/configurations`,
+   see [Configuring the Environment](#config).
 
    **Note:** You must have the root configuration file as `vagrant.yml`
-   or `vagrant.json` in the `.vagrant/configurations` directory.
+   or `vagrant.json` in the `configurations` directory.
 
-5. Add the following `Vagrantfile` file to root directory of your project:
-
-   ```ruby
-   ENV["VAGRANT_PROJECT_NAME"] = "your_project_name"
-   ENV['VAGRANT_VAGRANTFILE'] = File.expand_path(__FILE__)
-   ENV['VAGRANT_CONFIGS'] = ".vagrant/configurations/vagrant"
-
-   load ".vagrant/configurator/Vagrantfile"
-   ```
-
-6. Add `.vagrant/machine` to your `.gitignore`.
-7. Add the `Vagrantfile` and configuration files to your project's git.
-8. Use Vagrant like normal (i.e.: `vagrant up`).
+4. Add the `Vagrantfile` and configuration files to your project's git.
+5. Use Vagrant like normal (i.e.: `vagrant up`).
 
 ## <a name="config"></a> Configuring the Environment
 
