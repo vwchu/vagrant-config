@@ -26,7 +26,13 @@ primary:
 # default. Specific machines can override this setting.
 autostart:
 
-# list of (multiple) machines and the configurations
+# map of mixins and the configurations for inclusion
+# in the defined machines, used as encapsulation mechanism
+# for functionality shared by machines but not inherited;
+# allowing for better modularity.
+mixins:
+
+# map of (multiple) machines and the configurations
 # for each of the machines.
 machines:
   <machine_name>:       # machine name
@@ -41,6 +47,9 @@ machines:
                         # if abstract, cannot be created; not inherited
                         # attribute, must be explicitly set to true for each
                         # machine or defaults to false.
+    includes:           # list of mixins to include after inherited properties
+                        # and before processing the defined properties of the
+                        # machine.
     autostart:          # By default in a multi-machine environment, vagrant up
                         # will start all of the defined machines. The autostart
                         # setting allows you to tell Vagrant to not start
