@@ -29,7 +29,7 @@
   #
   print_help()
   {
-    cat "$0" | sed -n '/#<doc>/,/#<enddoc>/p' | while read -r line; do
+    cat $(which "$0") | sed -n '/#<doc>/,/#<enddoc>/p' | while read -r line; do
       if [[ "$line" != '#'* ]]; then
         break
       elif [[ "$line" == '#!/bin/bash' || "$line" == '#<doc>' || "$line" == '#<enddoc>' ]]; then
