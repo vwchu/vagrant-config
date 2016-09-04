@@ -35,10 +35,15 @@ class Machine
       inc = includes[m]
       if inc.has_key?(:includes) then
         b = {}
-        inc[:includes].push(m)
-        inc[:includes].map {|n| includes[n.to_sym]}.each do |n|
-          b = b.deep_merge(n)
+        b[:merged] = []
+        dependency.resolve.reverse.each do |n|
+          next unless inc[:includes].include?(n.to_s)
+          next if n == m or b[:merged].include?(n)
+          i = includes[n]
+          b = b.deep_merge(i)
+          b[:merged].push(n)
         end
+        b = b.deep_merge(includes[m])
         b.delete(:includes)
         includes[m] = b
       end
@@ -49,16 +54,18 @@ class Machine
   # Resolves each machine with its inherited properties and fields
   # from its inherited machines with its derived values.
   def Machine.resolve_dependency(machines, includes)
-    dependency = Dependency.new
-    machines.each do |n, m|
-      dependency.add(n, if m.has_key?(:inherit) then [m[:inherit]] else [] end)
-    end
-    dependency.resolve.each do |m|
+    mach_dep = Dependency.new
+    incl_dep = Dependency.new
+    machines.each {|n, m| mach_dep.add(n, if m.has_key?(:inherit) then [m[:inherit]] else [] end)}
+    includes.each {|n, m| incl_dep.add(n, if m.has_key?(:includes) then m[:includes] else [] end)}
+    mach_dep.resolve.each do |m|
       mach = machines[m]
       b = if mach.has_key?(:inherit) then machines[mach[:inherit].to_sym] else {} end
       if mach.has_key?(:includes) then
-        mach[:includes].map {|n| includes[n.to_sym]}.each do |n|
-          b = b.deep_merge(n)
+        incl_dep.resolve.reverse.each do |n|
+          next unless mach[:includes].include?(n.to_s)
+          next if b.has_key?(:merged) and b[:merged].include?(n)
+          b = b.deep_merge(includes[n])
         end
         mach.delete(:includes)
       end
