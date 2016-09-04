@@ -1,10 +1,9 @@
-# nvm-node.yml
+# node.yml
 
-includes: [httpd-server]
-machines:
-  web:
-    inherit: base
+mixins:
+  node:
     provisions:
+
       - kind: shell
         name: node
         privileged: false
@@ -18,3 +17,12 @@ machines:
             cd "$NVM_DIR"
             git checkout `git describe --abbrev=0 --tags --match "v[0-9]*" origin`
           ) && . "$NVM_DIR/nvm.sh" && nvm install node && config_environ
+
+      - kind: shell
+        name: npm-custom
+        privileged: false
+        inline: |
+          cat - <<'EOF'>> ~/.bashrc
+            export PATH="$PATH:$(echo ~/vagrant_root/node_modules/*/bin | tr [:blank:] ':')"
+            alias npm="npm --no-bin-links"
+          EOF

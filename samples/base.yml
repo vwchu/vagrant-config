@@ -9,3 +9,9 @@ machines:
       virtualbox: {
         cpus: 1, memory: 1024, customize: {groups: /_vagrant}
       }
+    provisions:
+      - kind: shell
+        name: basic
+        inline: |
+          apt-get update
+          apt-get install -y git gnupg
