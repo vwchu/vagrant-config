@@ -8,15 +8,19 @@ mixins:
         name: node
         privileged: false
         inline: |
+          download_nvm() {
+            git clone https://github.com/creationix/nvm.git "$NVM_DIR"; cd "$NVM_DIR"
+            git checkout `git describe --abbrev=0 --tags --match "v[0-9]*" origin`
+          }
           config_environ() {
-            echo 'export NVM_DIR="$HOME/.nvm"' >> ~/.bashrc
+            echo 'export NVM_DIR="'$NVM_DIR'"' >> ~/.bashrc
             echo '[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"' >> ~/.bashrc
           }
-          export NVM_DIR="$HOME/.nvm" && (
-            git clone https://github.com/creationix/nvm.git "$NVM_DIR"
-            cd "$NVM_DIR"
-            git checkout `git describe --abbrev=0 --tags --match "v[0-9]*" origin`
-          ) && . "$NVM_DIR/nvm.sh" && nvm install node && config_environ
+          export NVM_DIR="$HOME/.nvm" \
+              && download_nvm \
+              && source "$NVM_DIR/nvm.sh" \
+              && nvm install node \
+              && config_environ
 
       - kind: shell
         name: npm-custom
