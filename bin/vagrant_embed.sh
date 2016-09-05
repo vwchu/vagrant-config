@@ -60,6 +60,7 @@ repo_branch='master'
 relative_configs='.vagrant/configurations'
 relative_install='.vagrant/configurator'
 relative_vagrant_data='.vagrant/machines'
+template_config=$this_instance/samples/_default.yml
 
 subcommand=
 configurations=$relative_configs/vagrant
@@ -158,7 +159,10 @@ write_gitignore()
 write_main_config()
 {
   if $make_main && [[ ! -f $configurations ]]; then
-    cat $this_instance/samples/_default.yml > $configurations.yml
+    echo "# $configurations.yml" > $configurations.yml
+    if [[ -f $template_config ]]; then
+      cat $template_config | sed '/^#/d' >> $configurations.yml
+    fi
   fi
 }
 
