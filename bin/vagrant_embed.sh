@@ -39,6 +39,9 @@
 #       files in order of cascade; if path does not
 #       include file extension, will try .yml and .json
 #       in that order. Overrides --main option.
+#   --run-local
+#       Include ability to run the provisioning of the
+#       environment locally on the host machine.
 #   --help, -h
 #       Display this help usage message.
 #
@@ -202,6 +205,7 @@ process_options()
       (--no-squash) squash=false;;
       (--main=*)    configurations=$relative_configs/${argv#--main=};;
       (--configs=*) configurations=${argv#--configs=}; make_main=false;;
+      (--run-local) repo_branch=run_local;;
       (-*)          die "Unknown option '$argv'";;
       (*)           if [[ ! -d $argv ]]; then
                       die "'$argv' project directory does not exist"
