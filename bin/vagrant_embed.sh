@@ -155,6 +155,9 @@ write_gitignore()
   if [[ ! -f $gitignore ]]; then
     echo $relative_vagrant_data > $gitignore
   elif ! (cat $gitignore | grep -q $relative_vagrant_data); then
+    if ! file_ends_with_newline $gitignore; then
+      echo >> $gitignore
+    fi
     echo $relative_vagrant_data >> $gitignore
   fi
 }

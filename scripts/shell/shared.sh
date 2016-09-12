@@ -39,3 +39,8 @@
       fi
     done
   }
+
+  file_ends_with_newline()
+  {
+    [[ $(tail -c 1 "$1" | wc -l) -gt 0 ]]
+  }
