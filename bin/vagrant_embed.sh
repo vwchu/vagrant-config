@@ -39,6 +39,9 @@
 #       files in order of cascade; if path does not
 #       include file extension, will try .yml and .json
 #       in that order. Overrides --main option.
+#   --run-local
+#       Include ability to run the provisioning of the
+#       environment locally on the host machine.
 #   --help, -h
 #       Display this help usage message.
 #
@@ -60,6 +63,7 @@ repo_branch='master'
 relative_configs='.vagrant/configurations'
 relative_install='.vagrant/configurator'
 relative_vagrant_data='.vagrant/machines'
+template_config=$this_instance/samples/_default.yml
 
 subcommand=
 configurations=$relative_configs/vagrant
@@ -151,6 +155,9 @@ write_gitignore()
   if [[ ! -f $gitignore ]]; then
     echo $relative_vagrant_data > $gitignore
   elif ! (cat $gitignore | grep -q $relative_vagrant_data); then
+    if ! file_ends_with_newline $gitignore; then
+      echo >> $gitignore
+    fi
     echo $relative_vagrant_data >> $gitignore
   fi
 }
@@ -158,7 +165,10 @@ write_gitignore()
 write_main_config()
 {
   if $make_main && [[ ! -f $configurations ]]; then
-    cat $this_instance/samples/_default.yml > $configurations.yml
+    echo "# $configurations.yml" > $configurations.yml
+    if [[ -f $template_config ]]; then
+      cat $template_config | sed '/^#/d' >> $configurations.yml
+    fi
   fi
 }
 
@@ -198,6 +208,7 @@ process_options()
       (--no-squash) squash=false;;
       (--main=*)    configurations=$relative_configs/${argv#--main=};;
       (--configs=*) configurations=${argv#--configs=}; make_main=false;;
+      (--run-local) repo_branch=run_local;;
       (-*)          die "Unknown option '$argv'";;
       (*)           if [[ ! -d $argv ]]; then
                       die "'$argv' project directory does not exist"

@@ -29,7 +29,7 @@
   #
   print_help()
   {
-    cat "$0" | sed -n '/#<doc>/,/#<enddoc>/p' | while read -r line; do
+    cat $(which "$0") | sed -n '/#<doc>/,/#<enddoc>/p' | while read -r line; do
       if [[ "$line" != '#'* ]]; then
         break
       elif [[ "$line" == '#!/bin/bash' || "$line" == '#<doc>' || "$line" == '#<enddoc>' ]]; then
@@ -38,4 +38,9 @@
         echo "${line:2}"
       fi
     done
+  }
+
+  file_ends_with_newline()
+  {
+    [[ $(tail -c 1 "$1" | wc -l) -gt 0 ]]
   }

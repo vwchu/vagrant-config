@@ -1,11 +1,8 @@
 # homestead.yml
 
-includes: [base]
-machines:
+mixins:
   homestead:
     box: laravel/homestead
-    inherit: base
-    autostart: false
     provisions:
       - kind: shell
         name: composer

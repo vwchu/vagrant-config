@@ -1,9 +1,7 @@
-# rvm-ruby.yml
+# ruby.yml
 
-includes: [httpd-server]
-machines:
-  web:
-    inherit: base
+mixins:
+  ruby:
     provisions:
       - kind: shell
         name: ruby
