@@ -24,49 +24,49 @@ class Machine
     end
   end
 
-  # Resolves each include with its included properties and fields
+  # Resolves each mixin with its included properties and fields
   # from its includes with its derived values.
-  def Machine.resolve_includes(includes)
-    return includes unless includes.is_a? Hash
+  def Machine.resolve_mixins(mixins)
+    return mixins unless mixins.is_a? Hash
     dependency = Dependency.new
-    includes.each do |n, m|
+    mixins.each do |n, m|
       dependency.add(n, if m.has_key?(:includes) then m[:includes] else [] end)
     end
     dependency.resolve.each do |m|
-      inc = includes[m]
-      if inc.has_key?(:includes) then
+      mix = mixins[m]
+      if mix.has_key?(:includes) then
         b = {}
         b[:merged] = []
         dependency.resolve.reverse.each do |n|
-          next unless inc[:includes].include?(n.to_s)
+          next unless mix[:includes].include?(n.to_s)
           next if n == m or b[:merged].include?(n)
-          i = includes[n]
+          i = mixins[n]
           b = b.deep_merge(i)
           b[:merged].push(n)
         end
-        b = b.deep_merge(includes[m])
+        b = b.deep_merge(mixins[m])
         b.delete(:includes)
-        includes[m] = b
+        mixins[m] = b
       end
     end
-    return includes
+    return mixins
   end
 
   # Resolves each machine with its inherited properties and fields
   # from its inherited machines with its derived values.
-  def Machine.resolve_dependency(machines, includes)
+  def Machine.resolve_dependency(machines, mixins)
     mach_dep = Dependency.new
-    incl_dep = Dependency.new
+    mix_dep = Dependency.new
     machines.each {|n, m| mach_dep.add(n, if m.has_key?(:inherit) then [m[:inherit]] else [] end)} if machines.is_a? Hash
-    includes.each {|n, m| incl_dep.add(n, if m.has_key?(:includes) then m[:includes] else [] end)} if includes.is_a? Hash
+    mixins.each {|n, m| mix_dep.add(n, if m.has_key?(:includes) then m[:includes] else [] end)} if mixins.is_a? Hash
     mach_dep.resolve.each do |m|
       mach = machines[m]
       b = if mach.has_key?(:inherit) then machines[mach[:inherit].to_sym] else {} end
       if mach.has_key?(:includes) then
-        incl_dep.resolve.reverse.each do |n|
+        mix_dep.resolve.reverse.each do |n|
           next unless mach[:includes].include?(n.to_s)
           next if b.has_key?(:merged) and b[:merged].include?(n)
-          b = b.deep_merge(includes[n])
+          b = b.deep_merge(mixins[n])
         end
         mach.delete(:includes)
       end
@@ -83,7 +83,7 @@ class Machine
     unless settings.nil? then
       settings[:machines].each {|n, m| m[:name] = n.to_s}
       settings[:machines].each {|n, m| m[:abstract] = false unless m.has_key?(:abstract)}
-      settings[:mixins] = Machine.resolve_includes(settings[:mixins])
+      settings[:mixins] = Machine.resolve_mixins(settings[:mixins])
       Machine.resolve_dependency(settings[:machines], settings[:mixins]).each do |name, machine|
         next if machine[:abstract] # abstract machine, skip
         machine[:primary] = machine[:name] == settings[:primary]
