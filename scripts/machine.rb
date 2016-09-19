@@ -27,6 +27,7 @@ class Machine
   # Resolves each include with its included properties and fields
   # from its includes with its derived values.
   def Machine.resolve_includes(includes)
+    return includes unless includes.is_a? Hash
     dependency = Dependency.new
     includes.each do |n, m|
       dependency.add(n, if m.has_key?(:includes) then m[:includes] else [] end)
@@ -56,8 +57,8 @@ class Machine
   def Machine.resolve_dependency(machines, includes)
     mach_dep = Dependency.new
     incl_dep = Dependency.new
-    machines.each {|n, m| mach_dep.add(n, if m.has_key?(:inherit) then [m[:inherit]] else [] end)}
-    includes.each {|n, m| incl_dep.add(n, if m.has_key?(:includes) then m[:includes] else [] end)}
+    machines.each {|n, m| mach_dep.add(n, if m.has_key?(:inherit) then [m[:inherit]] else [] end)} if machines.is_a? Hash
+    includes.each {|n, m| incl_dep.add(n, if m.has_key?(:includes) then m[:includes] else [] end)} if includes.is_a? Hash
     mach_dep.resolve.each do |m|
       mach = machines[m]
       b = if mach.has_key?(:inherit) then machines[mach[:inherit].to_sym] else {} end
