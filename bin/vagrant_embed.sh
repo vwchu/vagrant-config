@@ -39,6 +39,12 @@
 #       files in order of cascade; if path does not
 #       include file extension, will try .yml and .json
 #       in that order. Overrides --main option.
+#   --install-dir=INSTALL_DIR
+#       Specify the installation directory for the configurator
+#       (default: .vagrant/configurator)
+#   --configs-dir=CONFIGS_DIR
+#       Specify the configurations directory
+#       (default: .vagrant/configurations)
 #   --run-local
 #       Include ability to run the provisioning of the
 #       environment locally on the host machine.
@@ -66,12 +72,13 @@ relative_vagrant_data='.vagrant/machines'
 template_config=$this_instance/samples/_default.yml
 
 subcommand=
-configurations=$relative_configs/vagrant
+configurations=
 project_rootpath=$PWD
 project_name=
 mode=submodule
 squash=true
 make_main=true
+main_config=vagrant
 
 #----------------------------------------
 # Git Functions
@@ -164,7 +171,7 @@ write_gitignore()
 
 write_main_config()
 {
-  if $make_main && [[ ! -f $configurations ]]; then
+  if $make_main && [[ ! -f $configurations.yml ]]; then
     echo "# $configurations.yml" > $configurations.yml
     if [[ -f $template_config ]]; then
       cat $template_config | sed '/^#/d' >> $configurations.yml
@@ -206,7 +213,9 @@ process_options()
                     esac;;
       (--squash)    squash=true;;
       (--no-squash) squash=false;;
-      (--main=*)    configurations=$relative_configs/${argv#--main=};;
+      (--configs-dir=*) relative_configs=${argv#--configs-dir=};;
+      (--install-dir=*) relative_install=${argv#--install-dir=};;
+      (--main=*)    main_config=${argv#--main=};;
       (--configs=*) configurations=${argv#--configs=}; make_main=false;;
       (--run-local) repo_branch=run_local;;
       (-*)          die "Unknown option '$argv'";;
@@ -217,6 +226,9 @@ process_options()
                     fi;;
     esac
   done
+  if $make_main; then
+    configurations=$relative_configs/$main_config
+  fi
 }
 
 #----------------------------------------
